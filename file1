@@ -1,1 +1,67 @@
 Create file1
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Untitled Document</title>
+</head>
+
+<body>
+<?php
+
+require_once('phpmailer/ip_server.php');
+require_once('phpmailer/class.phpmailer.php');
+
+
+class My_Mail
+{
+
+	protected $_to;
+	protected $_mailer;
+	protected $_parameters;
+	protected $_subject;
+	protected $_message;
+	
+	public function __construct($to, $subject, $message)
+	{
+	
+		$this->_to = $to;
+		$this->_subject = $subject;
+		$this->_message = $message;
+		
+		
+		
+		$this->_mailer = new PHPMailer();
+		
+		$this->_parameters = array(
+			'username' => 'username@domain.com',
+			'password' => 'your password',
+			'from' => 'from@domain.com',			
+			'host' => 'mail.domain.com'		);	
+		}		
+		public function sendMail()	
+		{		$this->_mailer->IsSMTP();		
+		        $this->_mailer->Host = $this->_parameters['host']; 		
+				$this->_mailer->SMTPAuth = true;    		
+				$this->_mailer->Username = $this->_parameters['username'];  		
+				$this->_mailer->Password = $this->_parameters['password'];                                  		
+				$this->_mailer->From =  $this->_parameters['from'];		
+				$this->_mailer->FromName = $this->_parameters['from'];				
+				$this->_mailer->AddAddress($this->_to);				
+				$this->_mailer->IsHTML(true);  		
+				$this->_mailer->Subject = $this->_subject;				
+				$this->_mailer->Body = $this->_message; 		
+				$this->_mailer->AltBody  =  'This is the text-only body';						
+				if(!$this->_mailer->Send()) 
+				{	echo $this->_mailer->ErrorInfo;		}
+			}
+}
+Using the above class is pretty straightforward:
+
+$mail = new My_Mail('recipient@domain.com', 'Test', 'Test');
+$mail->sendMail();
+
+?>
+</body>
+</html>
